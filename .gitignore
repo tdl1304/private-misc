@@ -1,4 +1,3 @@
-*.iml
-*.md
-LICENSE
-*.class
+.iml
+.md
+.class
