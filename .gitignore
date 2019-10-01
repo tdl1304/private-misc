@@ -2,3 +2,7 @@
 *.class
 *.project
 *.classpath
+.metadata/
+*.jar
+.settings/
+.idea/
