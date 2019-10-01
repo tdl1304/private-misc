@@ -1,12 +1,13 @@
 package Øving9.base;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Oppgaveoversikt {
-    private ArrayList<Student> studenter = new ArrayList<Student>();
+    private Student[] studenter;
     private int antStud = 0;
 
     public Oppgaveoversikt() {
+        studenter = new Student[antStud];
     }
 
     public int getAntStud() {
@@ -14,18 +15,20 @@ public class Oppgaveoversikt {
     }
 
     public int getAntLøst(int id) {
-        return studenter.get(id).getAntOppg();
+        return studenter[id].getAntOppg();
     }
 
     //setter en elev i systemet og sender tilbake konfirmasjonsinfo
     public void nyStud(String navn, int antOppg) {
+        this.studenter = Arrays.copyOf(studenter, studenter.length+1);
         antStud++;
         int studId = antStud - 1;
-        studenter.add(studId, new Student(navn, antOppg, studId));
+        studenter[studId] = new Student(navn, antOppg, studId);
+
     }
 
     public void økAntOppg(int økning, int id) {
-        studenter.get(id).økAntOppg(økning);
+        studenter[id].økAntOppg(økning);
     }
 
     public String toString() {
