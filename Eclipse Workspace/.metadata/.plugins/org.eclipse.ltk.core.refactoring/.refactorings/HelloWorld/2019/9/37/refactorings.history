@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename type &apos;HelloWorld&apos; to &apos;helloworld&apos;&#x0A;- Original project: &apos;HelloWorld&apos;&#x0A;- Original element: &apos;HelloWorld&apos;&#x0A;- Renamed element: &apos;helloworld&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;HelloWorld&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;{HelloWorld.java[HelloWorld" matchStrategy="1" name="helloworld" qualified="false" references="true" similarDeclarations="false" stamp="1568367449489" textual="false" version="1.0"/>
-</session>
