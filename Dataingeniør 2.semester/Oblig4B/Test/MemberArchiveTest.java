@@ -1,14 +1,11 @@
-package Oblig2;
-
-import Oblig2.memberships.BasicMember;
+import Oblig4B.MemberArchive;
 import org.junit.jupiter.api.Test;
 
-import javax.management.InstanceAlreadyExistsException;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MemberArchiveTest {
+public class MemberArchiveTest {
     MemberArchive archive = new MemberArchive();
 
     @Test

@@ -1,36 +1,34 @@
-package Oblig2;
-
+package Oblig4B;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import static Oblig2.BonusMember.*;
-
-import javax.management.InstanceAlreadyExistsException;
+import java.awt.event.ActionEvent;
 import java.io.*;
-import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MemberUI extends Application {
 
-    Logger logger = Logger.getLogger("MemberUI");
+    public static Logger logger = Logger.getLogger("Member system");
     MemberArchive memberArchive = new MemberArchive();
     private final ObservableList<Personals> data = FXCollections.observableArrayList();
     Scene mainScene = new Scene(new Group());
+    TableView tableView = new TableView();
+    TableSelectionModel<Personals> tableSelectionModel = tableView.getSelectionModel();
 
 
     public static void main(String[] args) {
@@ -40,22 +38,38 @@ public class MemberUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // --- init ---
+            // --- init --- \\
             refresh();
             primaryStage.setResizable(false);
-            // --- Buttons ---
+            tableSelectionModel.setSelectionMode(SelectionMode.SINGLE);
+            // --- Buttons --- \\
             Button addNewMember = new Button("Add a new member");
-            addNewMember.setOnAction((actionEvent -> {
+            addNewMember.setOnAction(actionEvent -> {
                 addNewMember(primaryStage);
-            }));
+            });
 
-            // --- Table ---
-            TableView tableView = new TableView();
+            Button deleteMember = new Button("Delete selected");
+            deleteMember.setOnAction(ActionEvent -> {
+                try {
+                    deleteMemberFromSelected();
+                } catch (IOException e) {
+                    log(Level.WARNING, e.getStackTrace().toString());
+                }
+            });
 
+            Button autoUpgrade = new Button("Upgrade members");
+            autoUpgrade.setOnAction(event -> {
+                try {
+                    autoUpgradeMembers();
+                } catch (IOException e) {
+                    log(Level.WARNING, e.getStackTrace().toString());
+                }
+            });
+
+            // --- Table --- \\
             final Label label = new Label("Memberlist");
             label.setFont(new Font("Arial", 20));
 
-            tableView.setEditable(true);
             TableColumn firstNameCol = new TableColumn("First Name");
             firstNameCol.setCellValueFactory(
                     new PropertyValueFactory<Personals, String>("firstname"));
@@ -71,7 +85,16 @@ public class MemberUI extends Application {
             tableView.setItems(data);
             tableView.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
             tableView.setPrefWidth(330);
-            //--- (Containers) Boxes ---
+            //--- TextBox ---\\
+            TextArea information = new TextArea();
+            information.setPrefWidth(130);
+            information.setEditable(false);
+            tableView.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+                if (!tableSelectionModel.isEmpty()) {
+                    information.setText(memberArchive.findMember(tableSelectionModel.getSelectedItem()).toString());
+                }
+            });
+            //--- (Containers) Boxes ---\\
             final VBox vbox1 = new VBox();
             final VBox vbox2 = new VBox();
             final HBox hbox = new HBox();
@@ -85,14 +108,14 @@ public class MemberUI extends Application {
 
             hbox.getChildren().addAll(vbox1, vbox2);
             vbox1.getChildren().addAll(label, tableView);
-            vbox2.getChildren().addAll(addNewMember);
+            vbox2.getChildren().addAll(addNewMember, deleteMember, autoUpgrade, information);
 
-            //--- End ---
+            //--- End --- //
             ((Group) mainScene.getRoot()).getChildren().addAll(hbox);
             homePage(primaryStage);
             primaryStage.show();
         } catch (Exception e) {
-            log(Level.WARNING, e.getMessage());
+            log(Level.WARNING, e.getStackTrace().toString());
         }
     }
 
@@ -103,18 +126,21 @@ public class MemberUI extends Application {
      * @throws IOException
      */
     private ArrayList<BonusMember> updateMemberList() throws IOException {
-        ArrayList<String[]> saveData = readMembers();
+        ArrayList<String[]> saveData = BonusMember.readMembers();
         ArrayList<BonusMember> members = new ArrayList<>();
-        saveData.forEach(x -> members.add(readFormattedSaveData(x)));
+        saveData.forEach(x -> members.add(BonusMember.readFormattedSaveData(x)));
         return members;
     }
 
+    //Updates memberlist from savefile, also checks for duplicates
     private void updateMembers() throws IOException {
+        memberArchive.getMemberList().clear();
         updateMemberList().forEach(x -> {
             memberArchive.addToList(x);
         });
     }
 
+    //Updates table from memberlist
     private void updateTable() {
         data.clear();
         for (BonusMember bonusMember : memberArchive.getMemberList()) {
@@ -122,9 +148,22 @@ public class MemberUI extends Application {
         }
     }
 
+    //Updates memberlist, then updates table
     private void refresh() throws IOException {
         updateMembers();
         updateTable();
+    }
+
+    private void deleteMemberFromSelected() throws IOException {
+        if (!tableSelectionModel.isEmpty()) {
+            memberArchive.deleteMember(memberArchive.findMember(tableSelectionModel.getSelectedItem()));
+            refresh();
+        }
+    }
+
+    private void autoUpgradeMembers() throws IOException {
+        memberArchive.checkMembers();
+        refresh();
     }
 
     private void addNewMember(Stage stage) {
@@ -149,7 +188,7 @@ public class MemberUI extends Application {
             try {
                 refresh();
             } catch (IOException e) {
-                e.printStackTrace();
+                log(Level.WARNING, e.getStackTrace().toString());
             } finally {
                 homePage(stage);
             }
@@ -157,20 +196,23 @@ public class MemberUI extends Application {
 
 
         register.setOnAction(actionEvent -> {
-            int id = memberArchive.newMember(new Personals(firstname.getText(), surname.getText(), email.getText(), password.getText()));
+            int id = 0;
             try {
+                id = memberArchive.newMember(new Personals(firstname.getText(), surname.getText(), email.getText(), password.getText()));
                 if (id != -1) {
-                    savePersonals(memberArchive.findMember(id));
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setContentText("Member is registered as a Basic member");
-                    alert.showAndWait();
+                    BonusMember.savePersonals(memberArchive.findMember(id));
+                    alertMessage("Member is registered as a basic member");
+                    refresh();
+                    homePage(stage);
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Member already exists!");
-                    alert.showAndWait();
+                    log(Level.WARNING, "Instance of BonusMember already exist");
+                    alertMessage("Member already exists!");
                 }
+            } catch (IllegalArgumentException e) {
+                log(Level.WARNING, "Bad input");
+                alertMessage("Please fill out all the blanks");
             } catch (IOException e) {
-                e.printStackTrace();
+                log(Level.WARNING, e.getStackTrace().toString());
             }
         });
 
@@ -191,7 +233,13 @@ public class MemberUI extends Application {
         stage.setScene(mainScene);
     }
 
-    private void log(Level level, String message) {
+    public static void log(Level level, String message) {
         logger.log(level, message);
+    }
+
+    private void alertMessage(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

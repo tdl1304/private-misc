@@ -1,13 +1,15 @@
-package Oblig2;
+package Oblig4B;
 
-import Oblig2.memberships.BasicMember;
-import Oblig2.memberships.GoldMember;
-import Oblig2.memberships.SilverMember;
+import Oblig4B.memberships.BasicMember;
+import Oblig4B.memberships.GoldMember;
+import Oblig4B.memberships.SilverMember;
+import com.sun.media.jfxmedia.logging.Logger;
 
-import javax.management.InstanceAlreadyExistsException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class MemberArchive {
@@ -42,15 +44,25 @@ public class MemberArchive {
         return member.get();
     }
 
+    public BonusMember findMember(Personals personals) {
+        Optional<BonusMember> member = memberList.stream()
+                .filter(x -> x.getPersonals().equals(personals)).findFirst();
+        return member.get();
+    }
+
     public void addToList(BonusMember member) {
         if (!memberList.contains(member)) {
             memberList.add(member);
         }
     }
 
+    public void deleteMember(BonusMember member) throws IOException {
+        BonusMember.deleteMemberData(member);
+    }
+
 
     /**
-     * Basic member arver av BonusMember, dermed kastes IllegalArgumentException ifølge super konstruktør
+     * Basic member arver av Oblig4B.BonusMember, dermed kastes IllegalArgumentException ifølge super konstruktør
      *
      * @param personals
      * @return
@@ -84,15 +96,30 @@ public class MemberArchive {
 
         basicAndSilverMembers.forEach(x -> {
             if (x instanceof BasicMember && x.findQualificationPoints(LocalDate.now()) >= SILVER_LIMIT) {
-                count.getAndIncrement();
-                memberList.remove(x);
-                memberList.add(new SilverMember(x.getMemberNo(), x.getEnrolledDate(), x.getPersonals(), x.getPoints()));
+                try {
+                    count.getAndIncrement();
+                    memberList.remove(x);
+                    deleteMember(x);
+                    SilverMember upgradedSilverMember = new SilverMember(x.getMemberNo(), x.getEnrolledDate(), x.getPersonals(), x.getPoints());
+                    BonusMember.savePersonals(upgradedSilverMember);
+                    memberList.add(upgradedSilverMember);
+                } catch (IOException e) {
+                    MemberUI.log(Level.WARNING, e.getStackTrace().toString());
+                }
             } else if (x instanceof SilverMember && x.findQualificationPoints(LocalDate.now()) >= GOLD_LIMIT) {
-                count.getAndIncrement();
-                memberList.remove(x);
-                memberList.add(new GoldMember(x.getMemberNo(), x.getEnrolledDate(), x.getPersonals(), x.getPoints()));
+                try {
+                    count.getAndIncrement();
+                    memberList.remove(x);
+                    deleteMember(x);
+                    GoldMember upgradedGoldMember = new GoldMember(x.getMemberNo(), x.getEnrolledDate(), x.getPersonals(), x.getPoints());
+                    BonusMember.savePersonals(upgradedGoldMember);
+                    memberList.add(upgradedGoldMember);
+                } catch (IOException e) {
+                    MemberUI.log(Level.WARNING, e.getStackTrace().toString());
+                }
             }
         });
+
         return count.get();
     }
 

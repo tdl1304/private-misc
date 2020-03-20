@@ -33,7 +33,7 @@ public class Main {
         animals.add(new Bat("Cistugo  ", 3002));
 
         zoo.setAnimals(animals);
-        //a)
+        //2a)
         Collection<Animal> flyingAnimals = animals.stream()
                 .filter(x -> x instanceof Flyable)
                 .collect(Collectors.toList());
@@ -42,7 +42,7 @@ public class Main {
             System.out.println(x.name + "can fly");
         });
 
-        //b)
+        //2b)
         Collection<Animal> jumpableMammals = animals.stream()
                 .filter(x -> x instanceof Mammal & x instanceof Jumpable)
                 .collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class Main {
 
 
 
-        /* a)
+        //3a)
         try {
             walker.stream().forEach(p -> {
                 ((Flyable) p).fly();
@@ -65,19 +65,19 @@ public class Main {
         } catch (ClassCastException e) {
             System.out.println(e.getMessage());
         }
-         */
 
-        /* b)
+
+        /* 3b)
         try {
             walker.stream().forEach(p -> {
                 ((Flyable) p).fly();
             });
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
             System.exit(1);
         }
          */
 
-        /* c)
+        /* 3c)
         try {
             try {
                 walker.stream().forEach(p -> {

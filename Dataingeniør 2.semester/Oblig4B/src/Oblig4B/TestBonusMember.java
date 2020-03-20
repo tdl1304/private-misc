@@ -1,9 +1,7 @@
-package Oblig2;
+package Oblig4B;
 
-import Oblig2.memberships.*;
+import Oblig4B.memberships.*;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 
 class TestBonusMember {
