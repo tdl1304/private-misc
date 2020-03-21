@@ -1,17 +1,17 @@
-package Oblig2;
+package Oblig4B;
 
-
-import Oblig2.memberships.BasicMember;
-import Oblig2.memberships.GoldMember;
-import Oblig2.memberships.SilverMember;
+import Oblig4B.memberships.BasicMember;
+import Oblig4B.memberships.GoldMember;
+import Oblig4B.memberships.SilverMember;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
-public class BonusMember {
-    public static String pathToResources = "/Users/tommyluu/Documents/IntellJ prosjekter/Oblig2/resources/";
+public abstract class BonusMember {
+    public static String pathToResources = System.getProperty("user.dir") + "\\resources\\";
     public static final double GOLD_FACTOR = 1.5;
     public static final double SILVER_FACTOR = 1.2;
     private final Personals personals;
@@ -29,7 +29,7 @@ public class BonusMember {
      */
     public BonusMember(int memberNo, LocalDate enrolledDate, Personals personals) throws IllegalArgumentException {
         if (memberNo < 0 || enrolledDate == null || personals == null) {
-            throw new IllegalArgumentException("Invalid arguments in BonusMember");
+            throw new IllegalArgumentException("Invalid arguments in Oblig4B.BonusMember");
         }
         this.personals = personals;
         this.memberNo = memberNo;
@@ -87,27 +87,18 @@ public class BonusMember {
         this.point += points;
     }
 
-    public static ArrayList<String[]> readMembers() throws IOException, FileNotFoundException, IndexOutOfBoundsException {
-        String fileName = "personals.txt";
-        String line = null;
-        ArrayList<String[]> strings = new ArrayList<>();
-        FileReader fileReader = new FileReader(pathToResources + "personals.txt");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        while ((line = bufferedReader.readLine()) != null) {
-            strings.add(line.split(","));
-        }
-        bufferedReader.close();
-
-        return strings;
-    }
-
+    /**
+     * Mapper og lagrer en Bonusmember i en tekst fil.
+     *
+     * @param b
+     * @return
+     * @throws IOException Kastes for feil ved skriving og lesing av fil.
+     */
     public static boolean savePersonals(BonusMember b) throws IOException {
         String[] saveData = formatSaveData(b);
         if (!readMembers().contains(saveData)) {
-            FileWriter fileWriter = new FileWriter(pathToResources + "personals.txt", true);
+            FileWriter fileWriter = new FileWriter(pathToResources + "members.txt", true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.newLine();
             bufferedWriter.append(
                     saveData[0] + "," +
                             saveData[1] + "," +
@@ -117,11 +108,66 @@ public class BonusMember {
                             saveData[5] + "," +
                             saveData[6]
             );
+            bufferedWriter.newLine();
             bufferedWriter.close();
+            fileWriter.close();
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Deletes a member from the save file
+     * @param b
+     * @throws IOException
+     */
+    public static void deleteMemberData(BonusMember b) throws IOException {
+        String[] tempData = formatSaveData(b);
+        String tempString = tempData[0] + "," + tempData[1] + "," + tempData[2] + "," + tempData[3] + "," + tempData[4] + "," + tempData[5] + "," + tempData[6];
+        String line = null;
+
+        //Save all data except the deleted bonusmember to a temporary text file
+        FileReader fr = new FileReader(pathToResources + "members.txt");
+        FileWriter fw = new FileWriter(pathToResources + "temp.txt", true);
+        BufferedReader br = new BufferedReader(fr);
+        BufferedWriter bw = new BufferedWriter(fw);
+
+        while ((line = br.readLine()) != null) {
+            if (!line.equals(tempString)) {
+                bw.append(line);
+                bw.newLine();
+            }
+        }
+
+        br.close();
+        bw.close();
+        fr.close();
+        fw.close();
+        //Delete content in members.txt
+        FileWriter clearMembers = new FileWriter(pathToResources+"members.txt");
+        clearMembers.write("");
+        clearMembers.close();
+
+        //Copy from temp file to member file
+        FileWriter fw1 = new FileWriter(pathToResources + "members.txt", true);
+        FileReader fr1 = new FileReader(pathToResources + "temp.txt");
+        BufferedWriter bw1 = new BufferedWriter(fw1);
+        BufferedReader br1 = new BufferedReader(fr1);
+        while ((line = br1.readLine()) != null) {
+            bw1.append(line);
+            bw1.newLine();
+        }
+        //Close connections
+        br1.close();
+        bw1.close();
+        fw1.close();
+        fr1.close();
+        //Clear temp.txt
+        FileWriter clearTemp = new FileWriter(pathToResources+"temp.txt");
+        clearTemp.write("");
+        clearTemp.close();
+        MemberUI.log(Level.INFO, b.toString()+"-successfully deleted-");
     }
 
     private static String[] formatSaveData(BonusMember b) {
@@ -136,26 +182,56 @@ public class BonusMember {
         return saveData;
     }
 
+    /**
+     * Leser tekstilen med savedata og gir en liste med bonusmember info i en String[]
+     *
+     * @return
+     * @throws IOException           kastes ved lese feil
+     * @throws FileNotFoundException kastes når fila ikke finnes
+     */
+    public static ArrayList<String[]> readMembers() throws IOException, FileNotFoundException {
+        String fileName = "members.txt";
+        String line = null;
+        ArrayList<String[]> strings = new ArrayList<>();
+        FileReader fileReader = new FileReader(pathToResources + "members.txt");
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+        while ((line = bufferedReader.readLine()) != null) {
+            if(!line.trim().equals("")) strings.add(line.split(","));
+        }
+        fileReader.close();
+        bufferedReader.close();
+
+        return strings;
+    }
+
     public static BonusMember readFormattedSaveData(String[] saveData) {
+        //Splits the date from savefile
         String[] date = saveData[1].split("-");
+        //Format enrolled date from savefile
         LocalDate saveDate = LocalDate.of(Integer.parseInt(date[0].trim()), Integer.parseInt(date[1].trim()), Integer.parseInt(date[2].trim()));
+        //Format the rest of the savedata
         int memberNo = Integer.parseInt(saveData[0].trim());
         int points = Integer.parseInt(saveData[6].trim());
         Personals p = new Personals(saveData[2].trim(), saveData[3].trim(), saveData[4].trim(), saveData[5].trim());
 
         if (points >= MemberArchive.GOLD_LIMIT) {
             return new GoldMember(memberNo, saveDate, p, points);
-        } else if (points >= MemberArchive.SILVER_LIMIT ) {
+        } else if (points >= MemberArchive.SILVER_LIMIT) {
             return new SilverMember(memberNo, saveDate, p, points);
         } else {
             return new BasicMember(memberNo, saveDate, p, points);
         }
     }
 
+    //Bonusmember object are the same if the email is the same.
     @Override
     public boolean equals(Object o) {
         if (this.getPersonals().getEmail().equals(((BonusMember) o).getPersonals().getEmail())) {
             return true;
         } else return false;
     }
+
+    @Override
+    public abstract String toString();
 }

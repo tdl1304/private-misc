@@ -1,2 +1,0 @@
-100, 2020-02-10, navn, etternavn, email, passord, 50000
-1889421434,2020-02-27,Tommy,Luu,tommy@tomsen.com,passord,0
