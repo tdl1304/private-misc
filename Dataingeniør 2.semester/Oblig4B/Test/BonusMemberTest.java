@@ -36,9 +36,9 @@ public class BonusMemberTest {
     @Test
     public void testEmptyParametersOkPassword() {
         try {
-            b1.okPassword("");
+            b1.okPassword(null);
             fail("password nullexception not caught"); //Test failed
-        } catch (NullPointerException exception) {
+        } catch (IllegalArgumentException exception) {
             //Test succeed
         }
     }
