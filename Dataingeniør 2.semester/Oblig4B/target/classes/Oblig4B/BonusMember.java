@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 public abstract class BonusMember {
-    public static String pathToResources = System.getProperty("user.dir") + "\\resources\\";
+    public static String pathToResources = System.getProperty("user.dir") + File.separator + "resources" + File.separator;
     public static final double GOLD_FACTOR = 1.5;
     public static final double SILVER_FACTOR = 1.2;
     private final Personals personals;
@@ -119,6 +119,7 @@ public abstract class BonusMember {
 
     /**
      * Deletes a member from the save file
+     *
      * @param b
      * @throws IOException
      */
@@ -145,7 +146,7 @@ public abstract class BonusMember {
         fr.close();
         fw.close();
         //Delete content in members.txt
-        FileWriter clearMembers = new FileWriter(pathToResources+"members.txt");
+        FileWriter clearMembers = new FileWriter(pathToResources + "members.txt");
         clearMembers.write("");
         clearMembers.close();
 
@@ -164,10 +165,10 @@ public abstract class BonusMember {
         fw1.close();
         fr1.close();
         //Clear temp.txt
-        FileWriter clearTemp = new FileWriter(pathToResources+"temp.txt");
+        FileWriter clearTemp = new FileWriter(pathToResources + "temp.txt");
         clearTemp.write("");
         clearTemp.close();
-        MemberUI.log(Level.INFO, b.toString()+"-successfully deleted-");
+        MemberUI.log(Level.INFO, b.toString() + "-successfully deleted-");
     }
 
     private static String[] formatSaveData(BonusMember b) {
@@ -197,7 +198,7 @@ public abstract class BonusMember {
         BufferedReader bufferedReader = new BufferedReader(fileReader);
 
         while ((line = bufferedReader.readLine()) != null) {
-            if(!line.trim().equals("")) strings.add(line.split(","));
+            if (!line.trim().equals("")) strings.add(line.split(","));
         }
         fileReader.close();
         bufferedReader.close();

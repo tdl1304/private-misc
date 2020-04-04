@@ -53,7 +53,7 @@ public class MemberUI extends Application {
                 try {
                     deleteMemberFromSelected();
                 } catch (IOException e) {
-                    log(Level.WARNING, e.getStackTrace().toString());
+                    log(Level.WARNING, e.getLocalizedMessage());
                 }
             });
 
@@ -62,7 +62,7 @@ public class MemberUI extends Application {
                 try {
                     autoUpgradeMembers();
                 } catch (IOException e) {
-                    log(Level.WARNING, e.getStackTrace().toString());
+                    log(Level.WARNING, e.getLocalizedMessage());
                 }
             });
 
@@ -115,7 +115,7 @@ public class MemberUI extends Application {
             homePage(primaryStage);
             primaryStage.show();
         } catch (Exception e) {
-            log(Level.WARNING, e.getStackTrace().toString());
+            log(Level.WARNING, e.getLocalizedMessage());
         }
     }
 
@@ -188,7 +188,7 @@ public class MemberUI extends Application {
             try {
                 refresh();
             } catch (IOException e) {
-                log(Level.WARNING, e.getStackTrace().toString());
+                log(Level.WARNING, e.getLocalizedMessage());
             } finally {
                 homePage(stage);
             }
@@ -212,7 +212,7 @@ public class MemberUI extends Application {
                 log(Level.WARNING, "Bad input");
                 alertMessage("Please fill out all the blanks");
             } catch (IOException e) {
-                log(Level.WARNING, e.getStackTrace().toString());
+                log(Level.WARNING, e.getLocalizedMessage());
             }
         });
 

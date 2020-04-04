@@ -1,3 +1,3 @@
 100, 2020-02-10, navn, etternavn, email, passord, 50000
 1889421434,2020-02-27,Tommy,Luu,tommy@tomsen.com,passord,0
-764690867,2020-03-20,da,fsfsa,fasf,asf,0
+96334650,2020-03-24,mora,di,er,feit,0
