@@ -1,3 +1,8 @@
 100, 2020-02-10, navn, etternavn, email, passord, 50000
 1889421434,2020-02-27,Tommy,Luu,tommy@tomsen.com,passord,0
+<<<<<<< HEAD
 96334650,2020-03-24,mora,di,er,feit,0
+=======
+1971678350,2020-03-24,tom,luu,tomsen@dot.com,123456,0
+123,2020-03-24,add,ass,dd@.com,75000,75000
+>>>>>>> d23ae7453770013b9969b1b97045de37de14ee46

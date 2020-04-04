@@ -61,7 +61,7 @@ public abstract class BonusMember {
      *
      * @param localDate
      * @return
-     * @throws IllegalArgumentException
+     * @throws NullPointerException
      */
     public int findQualificationPoints(LocalDate localDate) throws NullPointerException {
         if (localDate == null) throw new NullPointerException();
@@ -75,11 +75,9 @@ public abstract class BonusMember {
      *
      * @param password
      * @return
-     * @throws NullPointerException
      */
-    public boolean okPassword(String password) throws NullPointerException {
-        password.trim();
-        if (password.equals("")) throw new NullPointerException();
+    public boolean okPassword(String password) {
+        if (password == null || password.trim().equals("")) throw new IllegalArgumentException();
         return (personals.okPassword(password));
     }
 
