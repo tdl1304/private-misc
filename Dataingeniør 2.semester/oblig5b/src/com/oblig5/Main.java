@@ -10,11 +10,12 @@ import java.util.logging.SimpleFormatter;
 
 public class Main {
     public static Logger log = Logger.getLogger(Main.class.getName());
+
     public static FileHandler fh;
 
     public static void createLog() {
         try {
-            fh = new FileHandler(System.getProperty("user.dir") + File.separator + "log.log");
+            fh = new FileHandler(System.getProperty("user.dir") + File.separator + "log.log", true);
             log.addHandler(fh);
             fh.setFormatter(new SimpleFormatter());
         } catch (Exception e) {
@@ -35,6 +36,6 @@ public class Main {
         scandinavianWildAnimals.add(eva);
         log.info("Adding to list: " + eva.getName());
 
-        //scandinavianWildAnimals.forEach(x -> System.out.println(x.printInfo() + "\nAge:" + x.getAge() +"\n"));
+        scandinavianWildAnimals.forEach(x -> System.out.println(x.printInfo() + "\nAge:" + x.getAge() +"\n"));
     }
 }

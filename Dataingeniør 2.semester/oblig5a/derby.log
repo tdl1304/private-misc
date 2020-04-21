@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Tue Mar 31 21:35:05 CEST 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0171-3217-132f-0000033adc58 
-on database directory /Users/tommyluu/Documents/IntellJ prosjekter/contacts-v0.3.1/contactsdb with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
-Loaded from file:/Users/tommyluu/Documents/IntellJ%20prosjekter/contacts-v0.3.1/lib/derby.jar
+Tue Apr 21 09:53:59 CEST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0171-9bba-c0a3-00000630d5a8 
+on database directory C:\Users\tommy\Programming\private-misc\Dataingeniør 2.semester\oblig5a\contactsdb-local with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/tommy/Programming/Global%20libs/db-derby-10.14.2.0-bin/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_231-b11
-user.dir=/Users/tommyluu/Documents/IntellJ prosjekter/contacts-v0.3.1
-os.name=Mac OS X
-os.arch=x86_64
-os.version=10.14.6
+java.runtime.version=1.8.0_241-b07
+user.dir=C:\Users\tommy\Programming\private-misc\Dataingeniør 2.semester\oblig5a
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

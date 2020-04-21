@@ -14,7 +14,8 @@ import java.io.Serializable;
  * @version 2020.03.16
  */
 @Entity
-@Table(name = "ContactsApp", schema = "tommydl")
+@Table(name = "ContactsApp", schema = "tommydl") //ntnu sql servers
+//@Table(name = "ContactsDetails", schema = "APP") //Derby local db
 public class ContactDetails implements Comparable<ContactDetails>, Serializable {
 
   private String name;
