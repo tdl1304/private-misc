@@ -15,7 +15,7 @@ public class AddressBookDBHandler implements AddressBook, Serializable {
     private static AddressBookDBHandler instance;
 
     private AddressBookDBHandler() {
-        efact = Persistence.createEntityManagerFactory("contacts-pu-sql");
+        efact = Persistence.createEntityManagerFactory("contacts-pu-local-db");
         em = efact.createEntityManager();
     }
 

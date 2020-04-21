@@ -1,4 +1,4 @@
-/out/
+out/*
 addressbook.dat
 .idea/sonarlint
 /vpproject/
